@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Alquimistas | Calculadora</title>
+  <style>
+    :root{
+      --bg0:#0b0a08;
+      --bg1:#14110c;
+      --text:#f1efe9;
+      --muted:#bdb7aa;
+      --muted2:#8d877b;
+      --accent:#f6a21a; /* si definen el naranja oficial, cambiar acá */
+      --stroke:rgba(255,255,255,.08);
+      --shadow: 0 18px 40px rgba(0,0,0,.45);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans";
+      color:var(--text);
+      background: radial-gradient(1200px 900px at 10% 0%, #2a1b0a 0%, transparent 55%),
+                  radial-gradient(1100px 800px at 90% 20%, #1b2b3b 0%, transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+    }
+    .app{ width:min(430px, 100%); padding:18px 16px 22px; }
+
+    .top{ display:flex; align-items:center; gap:12px; padding:8px 6px 14px; }
+    
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px 6px 14px;
+}
+.brand img{
+        height:56px;
+        width:auto;
+        display:block;
+      }
+.brand .title-wrap{display:flex; flex-direction:column}
+      .brand h1{
+        font-size:15px;
+        margin:0;
+        font-weight:600;
+      }
+      .brand .subtitle{
+        font-size:11px;
+        margin-top:2px;
+      }
+
+h1{ font-size:18px; margin:0; font-weight:780; letter-spacing:.2px; }
+    .subtitle{ margin:0; font-size:12px; color:var(--muted2); margin-top:2px; }
+
+    .card{
+      position:relative;
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+      margin-top:14px;
+      overflow:hidden;
+    }
+.section-title{
+      font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+      color:var(--muted2);
+      margin:2px 0 10px;
+    }
+
+    .pours-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin:0 0 8px;
+    }
+    .total-timer{
+      font-variant-numeric: tabular-nums;
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.08em;
+      color:var(--muted);
+      padding:8px 10px;
+      border-radius:14px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      min-width:72px;
+      text-align:center;
+    }
+    .row{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+    .value{ font-size:40px; font-weight:920; letter-spacing:-.02em; color:var(--accent); }
+    .value span{font-size:18px; color:var(--muted); font-weight:750}
+
+    input[type="range"]{ width:100%; margin-top:10px; accent-color: var(--accent); }
+    .ticks{ display:flex; justify-content:space-between; color:var(--muted2); font-size:12px; margin-top:6px; }
+
+    .seg{ display:flex; gap:10px; margin-top:10px; }
+    .seg button{
+      flex:1; padding:12px 10px; border-radius:16px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--text);
+      font-weight:920;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+    .seg button.active{
+      background: rgba(246,162,26,.14);
+      border-color: rgba(246,162,26,.30);
+    }
+
+    .ratio-tools{ display:flex; gap:10px; align-items:center; margin-top:10px; }
+    .stepper{
+      width:44px;height:44px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      font-weight:980;
+      font-size:18px;
+      cursor:pointer;
+    }
+    .stepper:active{ transform: translateY(1px); }
+    .ratio-pill{
+      flex:1;
+      padding:12px 12px;
+      border-radius:14px;
+      background: rgba(246,162,26,.12);
+      border:1px solid rgba(246,162,26,.28);
+      font-weight:980;
+      text-align:center;
+      letter-spacing:.02em;
+    }
+
+    .result{
+      margin-top:14px;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:18px;
+      padding:14px;
+    }
+    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    .kpi{
+      padding:12px;
+      border-radius:16px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .kpi .label{
+      font-size:12px; color:var(--muted2);
+      letter-spacing:.12em; text-transform:uppercase;
+      margin-bottom:8px;
+    }
+    .kpi .num{ font-size:34px; font-weight:930; letter-spacing:-.02em; }
+    .kpi .unit{font-size:14px; color:var(--muted); font-weight:700}
+
+    .btn-primary{
+      width:100%;
+      margin-top:14px;
+      padding:14px 14px;
+      border-radius:18px;
+      background: linear-gradient(180deg, rgba(246,162,26,.95), rgba(200,131,19,.95));
+      border:none;
+      color:#1a1208;
+      font-weight:990;
+      letter-spacing:.02em;
+      cursor:pointer;
+    }
+    .btn-primary:active{ transform: translateY(1px); }
+
+    .hint{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted2);
+      line-height:1.35;
+    }
+    .hint strong{ color:var(--muted); }
+
+    .screen{display:none; width:100%}
+    .screen.active{display:block}
+
+    /* back tweak v4 */
+    .back{
+      justify-content:flex-start;
+      font-size:14px;
+      margin-top:2px;
+      margin-bottom:6px;
+    }
+    .back{
+      display:flex; align-items:center; gap:10px;
+      cursor:pointer;
+      color:var(--muted);
+      font-weight:860;
+      padding:8px 6px 2px;
+      user-select:none;
+    }
+
+    .panel{
+      margin-top:12px;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.07);
+      background: rgba(0,0,0,.20);
+    }
+    .panel label{
+      display:block;
+      font-size:12px;
+      color:var(--muted2);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+    .panel input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      outline:none;
+      font-size:16px;
+      font-weight:930;
+    }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .toggleline{
+      display:flex; align-items:center; gap:10px;
+      margin-top:10px;
+      color:var(--muted2);
+      font-size:13px;
+      font-weight:780;
+    }
+    .toggleline input{ width:18px; height:18px; accent-color: var(--accent); }
+
+    .ring-wrap{ display:grid; place-items:center; padding:10px 0 6px; }
+    .ring{
+      width:260px; height:260px;
+      border-radius:50%;
+      position:relative;
+      display:grid;
+      place-items:center;
+      background: conic-gradient(var(--accent) var(--p), rgba(255,255,255,.08) 0);
+      box-shadow: 0 25px 60px rgba(0,0,0,.45);
+    }
+    .ring::before{
+      content:"";
+      position:absolute; inset:18px;
+      background: radial-gradient(150px 150px at 50% 35%, rgba(255,255,255,.06), rgba(0,0,0,.10)),
+                  rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:50%;
+    }
+    .ring .inner{ position:relative; text-align:center; padding:10px; }
+    .phase{
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      font-size:12px;
+      color:var(--muted2);
+      font-weight:960;
+      margin-bottom:6px;
+    }
+    .time{
+      font-size:56px;
+      font-weight:995;
+      letter-spacing:-.03em;
+      margin:0;
+    }
+    .goal{ margin-top:4px; font-size:13px; color:var(--muted); font-weight:860; }
+
+    .actions{ display:flex; gap:10px; margin-top:14px; }
+    .btn{
+      flex:1;
+      padding:14px 14px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      font-weight:990;
+      cursor:pointer;
+    }
+    .btn.accent{ background: rgba(246,162,26,.95); color:#1a1208; border:none; }
+    .btn:active{ transform: translateY(1px); }
+
+    .targets{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .target{
+      padding:12px;
+      border-radius:16px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .target .lab{
+      font-size:11px; color:var(--muted2);
+      letter-spacing:.14em; text-transform:uppercase;
+    }
+    .target .val{
+      margin-top:6px;
+      font-size:20px;
+      font-weight:990;
+    }
+  
+    .back{justify-content:flex-start; font-size:14px; margin:0 0 8px;}
+
+/* ===== Mobile-first layout lock ===== */
+.screen{display:none; width:100%}
+.screen.active{display:block}
+
+html,body{overflow-x:hidden}
+body{
+  margin:0;
+  color:var(--text);
+  background: radial-gradient(1200px 900px at 10% 0%, #2a1b0a 0%, transparent 55%),
+              radial-gradient(1100px 800px at 90% 20%, #1b2b3b 0%, transparent 55%),
+              linear-gradient(180deg, var(--bg0), var(--bg1));
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+}
+
+/* App container: centered with max width (mobile-first) */
+.app{
+  width:100%;
+  max-width:390px; /* ancho objetivo (mobile-first) */
+  margin:0 auto;
+  padding:18px 16px 28px;
+  box-sizing:border-box;
+}
+@media (min-width: 480px){
+  .app{ max-width:430px; }
+}
+
+/* Brand centered on top */
+.app-header{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px 0 6px;
+}
+.app-logo{
+  width:min(280px, 86vw);
+  height:auto;
+  display:block;
+}
+
+/* ===== Modal (Finalizar) ===== */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,.62);
+  backdrop-filter: blur(6px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index: 999;
+}
+.modal-overlay.active{ display:flex; }
+.modal{
+  width:100%;
+  max-width: 430px;
+  border-radius: 22px;
+  border:1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(20,17,12,.92), rgba(0,0,0,.55));
+  box-shadow: 0 28px 80px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+.modal-header{
+  padding:14px 16px 10px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.modal-title{
+  margin:0;
+  font-size:16px;
+  font-weight:980;
+  letter-spacing:.2px;
+}
+.modal-sub{
+  margin:6px 0 0;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.35;
+}
+.modal-close{
+  width:40px; height:40px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  color:var(--text);
+  font-weight:980;
+  cursor:pointer;
+}
+.modal-body{ padding:0 16px 16px; }
+.video-wrap{
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.35);
+}
+.video-wrap iframe{ width:100%; height:220px; display:block; border:0; }
+@media (min-width: 480px){
+  .video-wrap iframe{ height:240px; }
+}
+.modal-actions{ display:flex; gap:10px; margin-top:12px; }
+.modal-actions .btn{ padding:12px 12px; border-radius:16px; }
+
+</style>
+</head>
+<body>
+  <div class="app">
+
+<header class="app-header"><img class="app-logo" src="assets/logo-alquimistas.png" alt="Alquimistas del Café"></header>
+
+    <!-- Screen 1: Calculadora -->
+    <div class="screen active" id="screenCalc">
+      <div class="card">
+        <div class="section-title main-title">Calculadora de ratios</div>
+        <div class="seg" id="modeSeg">
+          <button class="active" data-mode="water" type="button">Basado en bebida final</button>
+          <button data-mode="coffee" type="button">Basado en gramos de café</button>
+        </div>
+
+        <div class="section-title" style="margin-top:14px;" id="qtyTitle">Bebida final</div>
+        <div class="row">
+          <div style="color:var(--muted2); font-weight:950;" id="qtyLabel">Objetivo</div>
+          <div class="value"><span id="qtyNum">300</span><span id="qtyUnit"> ml</span></div>
+        </div>
+
+        <input id="qtyRange" type="range" min="100" max="1000" step="10" value="300" />
+        <div class="ticks" id="qtyTicks"><div>100</div><div>500</div><div>1000</div></div>
+
+        <div class="hint" id="qtyHint">Se calcula <strong>café (g)</strong> a partir de <strong>bebida final (ml)</strong>. (Sin absorción)</div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Proporción</div>
+        <div class="row">
+          <div style="color:var(--muted2); font-weight:950;">Ratio</div>
+          <div class="value" style="font-size:28px;"><span id="ratioTxt">1:16</span></div>
+        </div>
+
+        <input id="ratioRange" type="range" min="10" max="22" step="1" value="16" />
+        <div class="ticks"><div>1:10</div><div>1:16</div><div>1:22</div></div>
+
+        <div class="ratio-tools">
+          <button class="stepper" id="ratioMinus" type="button">−</button>
+          <div class="ratio-pill" id="ratioPill">1:16</div>
+          <button class="stepper" id="ratioPlus" type="button">+</button>
+        </div>
+
+        <div class="result">
+          <div class="grid2">
+            <div class="kpi">
+              <div class="label">Café</div>
+              <div class="num"><span id="coffeeG">18.8</span> <span class="unit">g</span></div>
+            </div>
+            <div class="kpi">
+              <div class="label">Bebida final</div>
+              <div class="num"><span id="waterMl">300</span> <span class="unit">ml</span></div>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="btnStart" type="button">Iniciar vertido</button>
+          <div class="hint">Blooming: agua bloom = <strong>2×</strong> la dosis de café (auto). Tiempo configurable.</div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Screen 2: Setup -->
+    <div class="screen" id="screenSetup">
+      <div class="back" id="btnBackSetup">← Volver</div>
+
+      <div class="card">
+        <div class="section-title">Configurar vertido</div>
+
+        <div class="targets">
+          <div class="target">
+            <div class="lab">Café</div>
+            <div class="val"><span id="sCoffee">0</span> g</div>
+          </div>
+          <div class="target">
+            <div class="lab">Bebida final</div>
+            <div class="val"><span id="sWater">0</span> g</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <label for="bloomSec">Tiempo de blooming (seg)</label>
+          <input id="bloomSec" type="number" min="0" step="1" value="30" />
+
+          <div class="row2">
+            <div>
+              <label for="poursN">Cantidad de vertidos (post-bloom)</label>
+              <input id="poursN" type="number" min="1" max="8" step="1" value="2" />
+            </div>
+            <div>
+              <label for="bloomWater">Agua bloom (g)</label>
+              <input id="bloomWater" type="number" min="0" step="1" value="0" />
+            </div>
+          </div>
+
+          <div class="toggleline">
+            <input id="autoBloom" type="checkbox" checked />
+            <label for="autoBloom">Auto: bloom = 2× café</label>
+          </div>
+
+          <div class="hint">Si está activo, el bloom se recalcula automáticamente al cambiar la dosis.</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="btnSetupReset" type="button">Reset</button>
+          <button class="btn accent" id="btnGoBloom" type="button">Iniciar blooming</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Bloom -->
+    <div class="screen" id="screenBloom">
+      <div class="back" id="btnBackBloom">← Volver</div>
+
+      <div class="card" style="padding:16px;">
+        <div class="pours-head" style="margin:0 0 8px;">
+          <div class="section-title" style="margin:0;">Vertido</div>
+          <div class="total-timer" aria-label="Tiempo total" title="Tiempo total" id="totalTimerBloom">00:00</div>
+        </div>
+
+        <div class="ring-wrap">
+          <div class="ring" id="ringBloom" style="--p: 0deg;">
+            <div class="inner">
+              <div class="phase">Blooming</div>
+              <p class="time" id="bloomTime">00:30</p>
+              <div class="goal">Agua bloom: <span id="bloomGoal">0</span> g</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="targets">
+          <div class="target">
+            <div class="lab">Ratio</div>
+            <div class="val" id="bloomRatio">1:16</div>
+          </div>
+          <div class="target">
+            <div class="lab">Bebida final</div>
+            <div class="val"><span id="bloomTotal">0</span> g</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="btnBloomPause" type="button">Pausar</button>
+          <button class="btn accent" id="btnBloomOk" type="button">OK</button>
+        </div>
+
+        <div class="hint">OK te lleva a los vertidos aunque el timer no haya terminado.</div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Vertidos -->
+    <div class="screen" id="screenPours">
+      <div class="back" id="btnBackPours">← Volver</div>
+
+      <div class="card" style="padding:16px;">
+        <div class="pours-head">
+          <div class="section-title" style="margin:0;">Vertidos</div>
+          <div class="total-timer" aria-label="Tiempo total" title="Tiempo total" id="totalTimer">00:00</div>
+        </div>
+
+        <div class="ring-wrap">
+          <div class="ring" id="ringPour" style="--p: 0deg;">
+            <div class="inner">
+              <div class="phase" id="pourTitle">Vertido 1</div>
+              <p class="time" id="pourTarget">0 g</p>
+              <div class="goal">Objetivo acumulado</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="targets">
+          <div class="target">
+            <div class="lab">Bloom</div>
+            <div class="val"><span id="pBloom">0</span> g</div>
+          </div>
+          <div class="target">
+            <div class="lab">Bebida final</div>
+            <div class="val"><span id="pTotal">0</span> g</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="btnPoursReset" type="button">Reiniciar</button>
+          <button class="btn accent" id="btnPoursOk" type="button">OK</button>
+        </div>
+
+        <div class="hint" id="poursHint"></div>
+        <div style="margin-top:20px; text-align:center;">
+          <a id="linkRatioYT" href="https://www.youtube.com/@alquimistasdelcafe" target="_blank" rel="noopener"
+             style="font-size:13px; font-weight:600; color:var(--muted); text-decoration:none;">
+             Ver explicación completa sobre el ratio
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal Finalizar (YouTube) -->
+  <div class="modal-overlay" id="finalModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="finalModalTitle">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="finalModalTitle">Gracias por usar nuestra calculadora</h2>
+          <p class="modal-sub" id="finalModalSub">Si querés, acá tenés la explicación completa del ratio en YouTube.</p>
+        </div>
+        <button class="modal-close" id="finalModalClose" type="button" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="video-wrap">
+          <iframe id="finalModalIframe" src="" title="Video de YouTube" loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+
+          <!-- Fallback cuando se abre como archivo (file://) -->
+          <div id="finalModalFallback" style="display:none; padding:18px; text-align:center; color:var(--muted);">
+            <div style="font-weight:700; color:var(--text); margin-bottom:6px;">Vista previa no disponible</div>
+            <div style="font-size:13px; line-height:1.35;">Si abrís este archivo desde tu compu, YouTube suele bloquear el reproductor. Subilo a GitHub Pages (o abrilo con un servidor local) y el video se va a ver acá mismo.</div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <a class="btn" id="finalModalOpenYT" href="#" target="_blank" rel="noopener">Abrir en YouTube</a>
+          <button class="btn accent" id="finalModalOk" type="button">Listo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Config editable: reemplazá link/título sin tocar el HTML -->
+  <script src="youtube-config.js"></script>
+
+  <script>
+    const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
+    const mmss = (s)=>{
+      s = Math.max(0, Math.round(s));
+      const m = Math.floor(s/60);
+      const r = s%60;
+      return String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0');
+    };
+    const round1 = (n)=> (Math.round(n*10)/10).toFixed(1);
+    const round0 = (n)=> String(Math.round(n));
+
+    const state = {
+      mode: 'water',     // 'water' = bebida final | 'coffee' = gramos de café
+      water: 300,        // bebida final
+      ratio: 16,
+      coffee: 0,
+
+      bloomSec: 30,
+      poursN: 2,
+      bloomWater: 0,
+
+      bloomRemaining: 30,
+      bloomRunning: true,
+      pourIndex: 1,
+      pourTargets: [],
+
+      // Timer total (bloom + vertidos)
+      totalElapsed: 0,     // segundos acumulados
+      totalRunning: false, // corriendo o pausado
+      totalLastTs: 0       // performance.now() del último tick
+    };
+
+    // Elements (calc)
+    const modeSeg = document.getElementById('modeSeg');
+    const qtyTitle = document.getElementById('qtyTitle');
+    const qtyLabel = document.getElementById('qtyLabel');
+    const qtyUnit = document.getElementById('qtyUnit');
+    const qtyNum = document.getElementById('qtyNum');
+    const qtyRange = document.getElementById('qtyRange');
+    const qtyTicks = document.getElementById('qtyTicks');
+    const qtyHint = document.getElementById('qtyHint');
+
+    const ratioRange = document.getElementById('ratioRange');
+    const ratioTxt = document.getElementById('ratioTxt');
+    const ratioPill = document.getElementById('ratioPill');
+    const ratioMinus = document.getElementById('ratioMinus');
+    const ratioPlus = document.getElementById('ratioPlus');
+
+    const coffeeG = document.getElementById('coffeeG');
+    const waterMl = document.getElementById('waterMl');
+    const btnStart = document.getElementById('btnStart');
+
+    // Screens
+    const screenCalc = document.getElementById('screenCalc');
+    const screenSetup = document.getElementById('screenSetup');
+    const screenBloom = document.getElementById('screenBloom');
+    const screenPours = document.getElementById('screenPours');
+
+    const showScreen = (which)=>{
+  document.querySelectorAll('.screen').forEach(s=>{
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  which.classList.add('active');
+  which.style.display = 'block';
+  window.scrollTo({top:0});
+};
+
+    function applyModeUI(){
+      if(state.mode === 'water'){
+        qtyTitle.textContent = 'Bebida final';
+        qtyLabel.textContent = 'Objetivo';
+        qtyUnit.textContent = ' ml';
+        qtyHint.innerHTML = 'Se calcula <strong>café (g)</strong> a partir de <strong>bebida final (ml)</strong>. (Sin absorción)';
+        qtyRange.min = 100; qtyRange.max = 1000; qtyRange.step = 10;
+        qtyTicks.innerHTML = '<div>100</div><div>500</div><div>1000</div>';
+        qtyRange.value = String(Math.round(state.water));
+        qtyNum.textContent = String(Math.round(state.water));
+      } else {
+        qtyTitle.textContent = 'Gramos de café';
+        qtyLabel.textContent = 'Dosis';
+        qtyUnit.textContent = ' g';
+        qtyHint.innerHTML = 'Se calcula <strong>bebida final (ml)</strong> a partir de <strong>café (g)</strong>. (Sin absorción)';
+        qtyRange.min = 5; qtyRange.max = 60; qtyRange.step = 0.5;
+        qtyTicks.innerHTML = '<div>5</div><div>20</div><div>60</div>';
+        const v = clamp(state.coffee || 20, 5, 60);
+        qtyRange.value = String(v);
+        qtyNum.textContent = String(v);
+      }
+    }
+
+    function compute(){
+      state.ratio = Number(ratioRange.value);
+
+      if(state.mode === 'water'){
+        state.water = Number(qtyRange.value);
+        state.coffee = state.water / state.ratio;
+      } else {
+        state.coffee = Number(qtyRange.value);
+        state.water = state.coffee * state.ratio; // ej: 20g a 1:15 => 300ml bebida final
+      }
+
+      ratioTxt.textContent = `1:${state.ratio}`;
+      ratioPill.textContent = `1:${state.ratio}`;
+
+      qtyNum.textContent = state.mode === 'water'
+        ? String(Math.round(state.water))
+        : String(Number(qtyRange.value));
+
+      coffeeG.textContent = round1(state.coffee);
+      waterMl.textContent = round0(state.water);
+    }
+
+    function setRatio(v){
+      v = clamp(v, 10, 22);
+      ratioRange.value = v;
+      compute();
+      if(screenSetup.classList.contains('active')) syncAutoBloom();
+    }
+
+    ratioRange.addEventListener('input', ()=>{ compute(); if(screenSetup.classList.contains('active')) syncAutoBloom(); });
+    ratioMinus.addEventListener('click', ()=> setRatio(state.ratio - 1));
+    ratioPlus.addEventListener('click', ()=> setRatio(state.ratio + 1));
+    qtyRange.addEventListener('input', ()=>{ compute(); if(screenSetup.classList.contains('active')) syncAutoBloom(); });
+
+    modeSeg.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button[data-mode]');
+      if(!btn) return;
+      const mode = btn.dataset.mode;
+      state.mode = mode;
+      [...modeSeg.querySelectorAll('button')].forEach(b=>b.classList.toggle('active', b.dataset.mode === mode));
+
+      if(mode === 'coffee') state.coffee = clamp(Number(round1(state.coffee)), 5, 60);
+      else state.water = clamp(Number(round0(state.water)), 100, 1000);
+
+      applyModeUI();
+      compute();
+    });
+
+    // Setup
+    const sCoffee = document.getElementById('sCoffee');
+    const sWater = document.getElementById('sWater');
+    const bloomSec = document.getElementById('bloomSec');
+    const poursN = document.getElementById('poursN');
+    const bloomWater = document.getElementById('bloomWater');
+    const autoBloom = document.getElementById('autoBloom');
+    const btnBackSetup = document.getElementById('btnBackSetup');
+    const btnSetupReset = document.getElementById('btnSetupReset');
+    const btnGoBloom = document.getElementById('btnGoBloom');
+
+    function syncAutoBloom(){
+      if(!autoBloom.checked) return;
+      const bw = Math.min(state.water, Math.round(state.coffee * 2)); // bloom = 2× café
+      bloomWater.value = String(bw);
+    }
+
+    function openSetup(){
+      stopTotalTimer();
+      compute();
+      sCoffee.textContent = round1(state.coffee);
+      sWater.textContent = round0(state.water);
+
+      bloomSec.value = 30;
+      poursN.value = 2;
+      autoBloom.checked = true;
+
+      syncAutoBloom();
+      showScreen(screenSetup);
+    }
+
+    btnStart.addEventListener('click', openSetup);
+    btnBackSetup.addEventListener('click', ()=> showScreen(screenCalc));
+    btnSetupReset.addEventListener('click', openSetup);
+    autoBloom.addEventListener('change', syncAutoBloom);
+
+    // Bloom
+    const ringBloom = document.getElementById('ringBloom');
+    const bloomTime = document.getElementById('bloomTime');
+    const bloomGoal = document.getElementById('bloomGoal');
+    const bloomTotal = document.getElementById('bloomTotal');
+    const bloomRatio = document.getElementById('bloomRatio');
+    const btnBackBloom = document.getElementById('btnBackBloom');
+    const btnBloomPause = document.getElementById('btnBloomPause');
+    const btnBloomOk = document.getElementById('btnBloomOk');
+
+    // Pours
+    const ringPour = document.getElementById('ringPour');
+    const pourTitle = document.getElementById('pourTitle');
+    const pourTarget = document.getElementById('pourTarget');
+    const pBloom = document.getElementById('pBloom');
+    const pTotal = document.getElementById('pTotal');
+    const poursHint = document.getElementById('poursHint');
+    const btnBackPours = document.getElementById('btnBackPours');
+    const btnPoursReset = document.getElementById('btnPoursReset');
+    const btnPoursOk = document.getElementById('btnPoursOk');
+    const totalTimer = document.getElementById('totalTimer');
+    const totalTimerBloom = document.getElementById('totalTimerBloom');
+
+    let bloomInterval = null;
+    let totalInterval = null;
+
+    function updateTotalTimerUI(){
+      const v = mmss(state.totalElapsed);
+      if(totalTimer) totalTimer.textContent = v;
+      if(totalTimerBloom) totalTimerBloom.textContent = v;
+    }
+
+    function startTotalTimer(reset=false){
+      if(reset){
+        state.totalElapsed = 0;
+      }
+      state.totalRunning = true;
+      state.totalLastTs = performance.now();
+      updateTotalTimerUI();
+
+      if(totalInterval) return;
+      totalInterval = setInterval(()=>{
+        if(!state.totalRunning) return;
+        const now = performance.now();
+        const dt = (now - state.totalLastTs) / 1000;
+        state.totalLastTs = now;
+        state.totalElapsed += dt;
+        updateTotalTimerUI();
+      }, 250);
+    }
+
+    function pauseTotalTimer(){
+      state.totalRunning = false;
+      updateTotalTimerUI();
+    }
+
+    function stopTotalTimer(){
+      state.totalRunning = false;
+      state.totalElapsed = 0;
+      updateTotalTimerUI();
+      if(totalInterval){
+        clearInterval(totalInterval);
+        totalInterval = null;
+      }
+    }
+
+    function setRing(el, progress01){
+      const deg = clamp(progress01, 0, 1) * 360;
+      el.style.setProperty('--p', deg + 'deg');
+    }
+
+    function applySetupInputs(){
+      state.bloomSec = clamp(Number(bloomSec.value || 0), 0, 600);
+      state.poursN = clamp(Number(poursN.value || 1), 1, 8);
+
+      let bw = clamp(Number(bloomWater.value || 0), 0, state.water);
+      bw = Math.round(bw);
+      bloomWater.value = String(bw);
+      state.bloomWater = bw;
+
+      const remaining = Math.max(0, state.water - state.bloomWater);
+      const per = remaining / state.poursN;
+      const targets = [];
+      for(let i=1;i<=state.poursN;i++){
+        let cum = state.bloomWater + per * i;
+        if(i === state.poursN) cum = state.water;
+        targets.push(Math.round(cum));
+      }
+      state.pourTargets = targets;
+      state.pourIndex = 1;
+    }
+
+    function openBloom(){
+      applySetupInputs();
+
+      // Timer total: arranca junto con el blooming
+      startTotalTimer(true);
+
+      state.bloomRemaining = state.bloomSec;
+      state.bloomRunning = true;
+
+      bloomGoal.textContent = state.bloomWater;
+      bloomTotal.textContent = Math.round(state.water);
+      bloomRatio.textContent = `1:${state.ratio}`;
+
+      bloomTime.textContent = mmss(state.bloomRemaining);
+      setRing(ringBloom, state.bloomSec === 0 ? 1 : 0);
+      btnBloomPause.textContent = 'Pausar';
+
+      if(bloomInterval) clearInterval(bloomInterval);
+      bloomInterval = setInterval(()=>{
+        if(!state.bloomRunning) return;
+        if(state.bloomRemaining <= 0) return;
+
+        state.bloomRemaining -= 1;
+        bloomTime.textContent = mmss(state.bloomRemaining);
+
+        const prog = state.bloomSec === 0 ? 1 : (1 - state.bloomRemaining / state.bloomSec);
+        setRing(ringBloom, prog);
+
+        if(state.bloomRemaining <= 0) setRing(ringBloom, 1);
+      }, 1000);
+
+      showScreen(screenBloom);
+    }
+
+    btnGoBloom.addEventListener('click', openBloom);
+    btnBackBloom.addEventListener('click', ()=>{
+      stopTotalTimer();
+      showScreen(screenSetup);
+    });
+
+    btnBloomPause.addEventListener('click', ()=>{
+      state.bloomRunning = !state.bloomRunning;
+      btnBloomPause.textContent = state.bloomRunning ? 'Pausar' : 'Reanudar';
+
+      // Pausa/Reanuda también el timer total
+      if(state.bloomRunning){
+        startTotalTimer(false);
+      }else{
+        pauseTotalTimer();
+      }
+    });
+
+    function openPours(){
+      if(bloomInterval){ clearInterval(bloomInterval); bloomInterval = null; }
+      showScreen(screenPours);
+      updateTotalTimerUI();
+      renderPour();
+    }
+
+    btnBloomOk.addEventListener('click', ()=>{
+      state.bloomRemaining = 0;
+      bloomTime.textContent = mmss(0);
+      setRing(ringBloom, 1);
+      openPours();
+    });
+
+    function renderPour(){
+      const i = state.pourIndex;
+      const total = state.poursN;
+      const target = (state.pourTargets[i-1] ?? Math.round(state.water));
+
+      pourTitle.textContent = `Vertido ${i} de ${total}`;
+      pourTarget.textContent = `${target} g`;
+
+      pBloom.textContent = state.bloomWater;
+      pTotal.textContent = Math.round(state.water);
+
+      const prev = (i === 1) ? state.bloomWater : state.pourTargets[i-2];
+      const delta = Math.max(0, target - prev);
+
+      setRing(ringPour, (i-1)/total);
+
+      poursHint.innerHTML = `Sumá aprox. <strong>${Math.round(delta)} g</strong> en este vertido (objetivo acumulado: <strong>${target} g</strong>).`;
+      btnPoursOk.textContent = (i >= total) ? 'Finalizar' : 'OK';
+    }
+
+    btnBackPours.addEventListener('click', ()=> showScreen(screenBloom));
+    btnPoursReset.addEventListener('click', ()=>{
+      stopTotalTimer();
+      showScreen(screenSetup);
+    });
+
+    btnPoursOk.addEventListener('click', ()=>{
+      if(state.pourIndex >= state.poursN){
+        // Finalizar: abre modal con video de YouTube
+        openFinalModal();
+        return;
+      }
+      state.pourIndex += 1;
+      renderPour();
+    });
+
+    // Init
+    applyModeUI();
+    compute();
+
+    // ===== Modal Finalizar =====
+    const finalModal = document.getElementById('finalModal');
+    const finalModalClose = document.getElementById('finalModalClose');
+    const finalModalOk = document.getElementById('finalModalOk');
+    const finalModalIframe = document.getElementById('finalModalIframe');
+    const finalModalOpenYT = document.getElementById('finalModalOpenYT');
+    const finalModalTitle = document.getElementById('finalModalTitle');
+    const finalModalSub = document.getElementById('finalModalSub');
+
+    const ytCfg = (window.ALCHEMY_YT || {});
+    const linkRatioYT = document.getElementById('linkRatioYT');
+
+    function parseYouTubeUrl(input){
+      if(!input || typeof input !== 'string') return { videoId:null, listId:null, start:null };
+      const raw = input.trim();
+      try{
+        // Si viene un <iframe ...> completo, extrae el src
+        if(raw.includes('<iframe')){
+          const m = raw.match(/src\s*=\s*"([^"]+)"/i);
+          if(m && m[1]) return parseYouTubeUrl(m[1]);
+        }
+        const u = new URL(raw);
+        const host = u.hostname.replace(/^www\./,'');
+        const path = u.pathname;
+
+        // playlist
+        const listId = u.searchParams.get('list');
+        const start = u.searchParams.get('t') || u.searchParams.get('start');
+
+        // youtu.be/<id>
+        if(host === 'youtu.be'){
+          const vid = path.split('/').filter(Boolean)[0] || null;
+          return { videoId: vid, listId, start };
+        }
+
+        // youtube.com/watch?v=<id>
+        if(host.endsWith('youtube.com')){
+          if(path.startsWith('/watch')){
+            return { videoId: u.searchParams.get('v'), listId, start };
+          }
+          // /embed/<id>
+          if(path.startsWith('/embed/')){
+            return { videoId: path.split('/')[2] || null, listId, start };
+          }
+          // /shorts/<id>
+          if(path.startsWith('/shorts/')){
+            return { videoId: path.split('/')[2] || null, listId, start };
+          }
+        }
+
+        return { videoId:null, listId, start };
+      }catch(e){
+        return { videoId:null, listId:null, start:null };
+      }
+    }
+
+    function toSeconds(t){
+      if(!t) return null;
+      // 90 | 1m30s | 1m | 30s
+      if(/^\d+$/.test(t)) return String(parseInt(t,10));
+      let s = 0;
+      const m1 = t.match(/(\d+)h/i); if(m1) s += parseInt(m1[1],10)*3600;
+      const m2 = t.match(/(\d+)m/i); if(m2) s += parseInt(m2[1],10)*60;
+      const m3 = t.match(/(\d+)s/i); if(m3) s += parseInt(m3[1],10);
+      return s ? String(s) : null;
+    }
+
+    function buildYouTubeLinks(cfg){
+      const seed = cfg.youtubeUrl || cfg.watchUrl || cfg.embedUrl || '';
+      const p = parseYouTubeUrl(seed);
+      const videoId = p.videoId;
+      const listId = p.listId;
+      const start = toSeconds(p.start);
+
+      // Watch URL
+      let watchUrl = cfg.watchUrl;
+      if(!watchUrl){
+        if(videoId) watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        else if(seed) watchUrl = seed;
+        else watchUrl = 'https://www.youtube.com/@alquimistasdelcafe';
+        if(listId && watchUrl.includes('watch?v=')) watchUrl += `&list=${encodeURIComponent(listId)}`;
+        if(start && watchUrl.includes('watch?v=')) watchUrl += `&t=${encodeURIComponent(start)}`;
+      }
+
+      // Embed URL (nocookie + sin ?si=)
+      let embedUrl = cfg.embedUrl;
+      if(!embedUrl){
+        if(videoId){
+          const params = new URLSearchParams();
+          params.set('rel','0');
+          params.set('modestbranding','1');
+          params.set('playsinline','1');
+          if(start) params.set('start', start);
+          if(listId) params.set('list', listId);
+          embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+        }else{
+          embedUrl = '';
+        }
+      }
+
+      return { watchUrl, embedUrl };
+    }
+
+    // Actualiza el link “Ver explicación…”
+    if(linkRatioYT){
+      const links = buildYouTubeLinks(ytCfg);
+      linkRatioYT.href = links.watchUrl;
+      if(ytCfg.linkText) linkRatioYT.textContent = ytCfg.linkText;
+    }
+
+    function openFinalModal(){
+      // Congela el tiempo total al finalizar
+      pauseTotalTimer();
+      // Defaults (por si todavía no cargaste el video)
+      const title = ytCfg.title || 'Video completo: Ratio';
+      const links = buildYouTubeLinks(ytCfg);
+      const embedUrl = links.embedUrl;
+      const watchUrl = links.watchUrl;
+      const thanks = ytCfg.thanks || 'Gracias por usar nuestra calculadora.';
+      const subtitle = ytCfg.subtitle || 'Si querés, acá tenés la explicación completa del ratio en YouTube.';
+
+      finalModalTitle.textContent = thanks;
+      finalModalSub.textContent = subtitle;
+      // Nota: si abrís el HTML como archivo (file://), YouTube suele bloquear embeds y muestra error.
+      // En ese caso, mostramos el botón para abrirlo en YouTube y dejamos el iframe vacío.
+      if(location.protocol === 'file:'){
+        finalModalIframe.src = '';
+        finalModalIframe.style.display = 'none';
+        const fb = document.getElementById('finalModalFallback');
+        if(fb) fb.style.display = 'block';
+      }else{
+        finalModalIframe.style.display = '';
+        const fb = document.getElementById('finalModalFallback');
+        if(fb) fb.style.display = 'none';
+        finalModalIframe.src = embedUrl;
+      }
+      finalModalIframe.title = title;
+      finalModalOpenYT.href = watchUrl;
+
+      finalModal.classList.add('active');
+      finalModal.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFinalModal(){
+      // Resetea para un nuevo cálculo
+      stopTotalTimer();
+      finalModal.classList.remove('active');
+      finalModal.setAttribute('aria-hidden','true');
+      finalModalIframe.src = '';
+      finalModalIframe.style.display = '';
+      const fb = document.getElementById('finalModalFallback');
+      if(fb) fb.style.display = 'none';
+      document.body.style.overflow = '';
+      // Vuelve a pantalla 1
+      showScreen(screenCalc);
+    }
+
+    finalModalClose.addEventListener('click', closeFinalModal);
+    finalModalOk.addEventListener('click', closeFinalModal);
+    finalModal.addEventListener('click', (e)=>{
+      if(e.target === finalModal) closeFinalModal();
+    });
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape' && finalModal.classList.contains('active')) closeFinalModal();
+    });
+  </script>
+</body>
+</html>
