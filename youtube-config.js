@@ -12,7 +12,7 @@ window.ALCHEMY_YT = {
 
   // ✅ Pegá ACÁ cualquier link de YouTube (youtu.be / watch?v= / embed / shorts / playlist)
   // El sistema obtiene el ID y arma el embed automáticamente.
-  youtubeUrl: "https://youtu.be/JcTUBA4IYRo?si=mbyDZU5s3p3g5FM0",
+  youtubeUrl: "https://youtu.be/fkFKLuxZImg?si=ma7OWndkhG4YLbQ5",
 
   // Texto del link en la pantalla de vertidos
   linkText: "Ver explicación completa sobre el ratio"
